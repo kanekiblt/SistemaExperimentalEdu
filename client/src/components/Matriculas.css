@@ -1,0 +1,13 @@
+.table select {
+  background-color: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.table select option {
+  background-color: white;
+  color: #333;
+}
+
