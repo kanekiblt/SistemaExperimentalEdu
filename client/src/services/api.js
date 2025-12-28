@@ -43,7 +43,9 @@ export const matriculaService = {
   updateEstado: (id, estado, documentosCompletos) => 
     api.put(`/matricula/${id}/estado`, { estado, documentos_completos: documentosCompletos }),
   ratificacion: (añoAcademico) => 
-    api.post('/matricula/ratificacion', { año_academico: añoAcademico })
+    api.post('/matricula/ratificacion', { año_academico: añoAcademico }),
+  ratificacionIndividual: (estudianteId, añoAcademico) => 
+    api.post('/matricula/ratificacion/individual', { estudiante_id: estudianteId, año_academico: añoAcademico })
 };
 
 export const vacantesService = {
@@ -53,7 +55,18 @@ export const vacantesService = {
 
 export const dashboardService = {
   getEstadisticas: (año) => api.get('/dashboard/estadisticas', { params: { año } }),
-  getMatriculasRecientes: () => api.get('/dashboard/matriculas-recientes')
+  getMatriculasRecientes: () => api.get('/dashboard/matriculas-recientes'),
+  getMatriculados: (año) => api.get('/dashboard/matriculados', { params: { año } })
+};
+
+export const finanzasService = {
+  getIngresosMensual: (año, mes) => api.get('/finanzas/ingresos/mensual', { params: { año, mes } }),
+  getIngresosAnual: (año) => api.get('/finanzas/ingresos/anual', { params: { año } }),
+  getEgresosMensual: (año, mes) => api.get('/finanzas/egresos/mensual', { params: { año, mes } }),
+  getEgresosAnual: (año) => api.get('/finanzas/egresos/anual', { params: { año } }),
+  getResumen: (año, mes) => api.get('/finanzas/resumen', { params: { año, mes } }),
+  createEgreso: (data) => api.post('/finanzas/egresos', data),
+  getEgresos: () => api.get('/finanzas/egresos')
 };
 
 export const notificacionesService = {
@@ -89,6 +102,13 @@ export const convocatoriasService = {
 export const padresService = {
   consulta: (data) => api.post('/padres/consulta', data),
   nuevaConsulta: (data) => api.post('/padres/consulta/nueva', data)
+};
+
+export const proyectosService = {
+  getAll: (destacados) => api.get('/proyectos', { params: { destacados } }),
+  getLogros: (destacados) => api.get('/proyectos/logros', { params: { destacados } }),
+  create: (data) => api.post('/proyectos', data),
+  createLogro: (data) => api.post('/proyectos/logros', data)
 };
 
 export const diagnosticoService = {

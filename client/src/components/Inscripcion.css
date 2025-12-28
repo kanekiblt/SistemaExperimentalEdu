@@ -1,6 +1,7 @@
 .inscripcion-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  /* Background handled by body, but if we want specific override: */
+  background: transparent;
   padding: 40px 20px;
 }
 
@@ -10,35 +11,39 @@
 
 .inscripcion-header {
   text-align: center;
-  color: white;
+  color: var(--text-white);
   margin-bottom: 30px;
 }
 
 .inscripcion-header h1 {
   font-size: 32px;
   margin-bottom: 10px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .inscripcion-header h2 {
   font-size: 24px;
   font-weight: normal;
+  color: var(--text-muted);
 }
 
 .inscripcion-card {
   max-width: 800px;
   margin: 0 auto;
-  background: white;
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--card-border);
   border-radius: 10px;
   padding: 40px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
 }
 
 .inscripcion-card h3 {
-  color: #0066cc;
+  color: var(--gold-accent);
   margin-top: 30px;
   margin-bottom: 20px;
   padding-bottom: 10px;
-  border-bottom: 2px solid #0066cc;
+  border-bottom: 1px solid var(--card-border);
 }
 
 .inscripcion-card h3:first-child {
@@ -58,9 +63,9 @@
 }
 
 .alert-warning {
-  background-color: #fff3cd;
-  color: #856404;
-  border: 1px solid #ffeaa7;
+  background-color: rgba(255, 193, 7, 0.1);
+  color: var(--warning);
+  border: 1px solid rgba(255, 193, 7, 0.2);
 }
 
 @media (max-width: 768px) {
@@ -68,4 +73,3 @@
     grid-template-columns: 1fr;
   }
 }
-

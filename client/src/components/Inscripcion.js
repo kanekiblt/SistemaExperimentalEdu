@@ -41,6 +41,10 @@ const Inscripcion = () => {
     }
   };
 
+  useEffect(() => {
+    loadVacantes();
+  }, [formData.año_academico]);
+
   const handleChange = (section, field, value) => {
     if (section) {
       setFormData({
@@ -94,9 +98,9 @@ const Inscripcion = () => {
     }
   };
 
-  const vacantesDisponibles = vacantes.filter(v => 
-    v.nivel === formData.nivel && 
-    v.grado === formData.grado && 
+  const vacantesDisponibles = vacantes.filter(v =>
+    v.nivel === formData.nivel &&
+    v.grado === formData.grado &&
     v.turno === formData.turno &&
     v.disponibles > 0
   );
@@ -250,13 +254,21 @@ const Inscripcion = () => {
           <div className="form-row">
             <div className="form-group">
               <label>Grado *</label>
-              <input
-                type="text"
+              <select
                 value={formData.grado}
                 onChange={(e) => handleChange(null, 'grado', e.target.value)}
                 required
-                placeholder="Ej: 1ro, 2do, 3ro..."
-              />
+                disabled={!formData.nivel}
+              >
+                <option value="">Seleccione</option>
+                {[...new Set(vacantes
+                  .filter(v => v.nivel === formData.nivel && v.disponibles > 0)
+                  .map(v => v.grado)
+                  .sort()
+                )].map(grado => (
+                  <option key={grado} value={grado}>{grado}</option>
+                ))}
+              </select>
             </div>
             <div className="form-group">
               <label>Turno *</label>
@@ -264,10 +276,15 @@ const Inscripcion = () => {
                 value={formData.turno}
                 onChange={(e) => handleChange(null, 'turno', e.target.value)}
                 required
+                disabled={!formData.grado}
               >
                 <option value="">Seleccione</option>
-                <option>Mañana</option>
-                <option>Tarde</option>
+                {[...new Set(vacantes
+                  .filter(v => v.nivel === formData.nivel && v.grado === formData.grado && v.disponibles > 0)
+                  .map(v => v.turno)
+                )].map(turno => (
+                  <option key={turno} value={turno}>{turno}</option>
+                ))}
               </select>
             </div>
           </div>

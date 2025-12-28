@@ -32,7 +32,7 @@ const PortalDirector = () => {
   });
   const [emailsDestinatarios] = useState([
     { email: 'mirian2demayo@gmail.com', nombre: 'Mirian (Apoderado)' },
-    { email: 'kanekik0902@gmail.com', nombre: 'Kane (Apoderado)' },
+    { email: 'kanekk0902@gmail.com', nombre: 'Kane (Apoderado)' },
     { email: 'antonyboyer980@gmail.com', nombre: 'Antony (Prueba)' }
   ]);
   const [diagnosticoEmail, setDiagnosticoEmail] = useState(null);
@@ -82,13 +82,27 @@ const PortalDirector = () => {
   };
 
   const handleRatificacion = async () => {
-    if (window.confirm('¿Desea enviar las ratificaciones de permanencia a todos los estudiantes activos?')) {
+    if (window.confirm('¿Desea enviar las ratificaciones de permanencia a todos los estudiantes activos? Se incluirá el link al portal web.')) {
       try {
         const añoAcademico = new Date().getFullYear().toString();
         const response = await matriculaService.ratificacion(añoAcademico);
         toast.success(`Ratificación enviada a ${response.data.enviados} apoderados`);
+        loadData();
       } catch (error) {
         toast.error('Error al enviar ratificaciones');
+      }
+    }
+  };
+
+  const handleRatificacionIndividual = async (estudianteId, nombreEstudiante) => {
+    if (window.confirm(`¿Desea enviar ratificación de permanencia a ${nombreEstudiante}? Se incluirá el link al portal web.`)) {
+      try {
+        const añoAcademico = new Date().getFullYear().toString();
+        const response = await matriculaService.ratificacionIndividual(estudianteId, añoAcademico);
+        toast.success(`Ratificación enviada a ${response.data.estudiante}`);
+        loadData();
+      } catch (error) {
+        toast.error(error.response?.data?.error || 'Error al enviar ratificación');
       }
     }
   };
@@ -305,7 +319,12 @@ const PortalDirector = () => {
 
       {activeTab === 'estudiantes' && (
         <div className="card">
-          <h2>Lista de Estudiantes</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <h2>Lista de Estudiantes</h2>
+            <button onClick={handleRatificacion} className="btn btn-primary">
+              Enviar Ratificación Masiva
+            </button>
+          </div>
           <table className="table">
             <thead>
               <tr>
@@ -319,6 +338,7 @@ const PortalDirector = () => {
                 <th>Email Apoderado</th>
                 <th>Teléfono</th>
                 <th>Estado</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -338,10 +358,26 @@ const PortalDirector = () => {
                       {est.estado}
                     </span>
                   </td>
+                  <td>
+                    {(est.apoderado_email || est.telefono) && (
+                      <button
+                        onClick={() => handleRatificacionIndividual(est.id, `${est.nombres} ${est.apellidos}`)}
+                        className="btn btn-success"
+                        style={{ fontSize: '12px', padding: '5px 10px' }}
+                        title="Enviar ratificación individual con link al portal"
+                      >
+                        📧 Ratificar
+                      </button>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          <div style={{ marginTop: '15px', padding: '15px', backgroundColor: '#e7f3ff', borderRadius: '5px', fontSize: '14px' }}>
+            <strong>💡 Nota:</strong> Las ratificaciones incluyen un link al portal web donde los padres pueden registrar a sus hijos.
+            El link es: <a href="/padres" target="_blank" style={{ color: '#0066cc' }}>/padres</a>
+          </div>
         </div>
       )}
 
@@ -516,7 +552,7 @@ const PortalDirector = () => {
             </p>
             <p style={{ margin: '0', fontSize: '14px', color: '#666' }}>
               <strong>Email de envío:</strong> antonyboyer980@gmail.com<br/>
-              <strong>Destinatarios configurados:</strong> mirian2demayo@gmail.com, kanekik0902@gmail.com
+              <strong>Destinatarios configurados:</strong> mirian2demayo@gmail.com, kanekk0902@gmail.com
             </p>
           </div>
 
@@ -579,14 +615,14 @@ SMTP_PASS=tu_app_password`}
             </pre>
             <p style={{ marginTop: '10px', fontSize: '14px' }}>
               <strong>Email de envío:</strong> antonyboyer980@gmail.com<br/>
-              <strong>Destinatarios:</strong> mirian2demayo@gmail.com, kanekik0902@gmail.com<br/>
+              <strong>Destinatarios:</strong> mirian2demayo@gmail.com, kanekk0902@gmail.com<br/>
               Si usas Gmail con 2FA, necesitas generar una "App Password" en tu cuenta de Google.
             </p>
           </div>
           
           <div style={{ marginTop: '15px', padding: '15px', backgroundColor: '#fff3cd', borderRadius: '5px', border: '1px solid #ffc107' }}>
             <p style={{ margin: '0', fontSize: '14px', color: '#856404' }}>
-              <strong>💡 Tip:</strong> Cuando envíes ratificaciones masivas, los emails se enviarán automáticamente a todos los apoderados registrados, incluyendo mirian2demayo@gmail.com y kanekik0902@gmail.com.
+              <strong>💡 Tip:</strong> Cuando envíes ratificaciones masivas, los emails se enviarán automáticamente a todos los apoderados registrados, incluyendo mirian2demayo@gmail.com y kanekk0902@gmail.com.
             </p>
           </div>
         </div>

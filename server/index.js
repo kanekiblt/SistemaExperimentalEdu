@@ -23,6 +23,8 @@ const planificacionRoutes = require('./routes/planificacion');
 const convocatoriasRoutes = require('./routes/convocatorias');
 const padresRoutes = require('./routes/padres');
 const diagnosticoRoutes = require('./routes/diagnostico');
+const finanzasRoutes = require('./routes/finanzas');
+const proyectosRoutes = require('./routes/proyectos');
 
 // Rutas
 app.use('/api/auth', authRoutes);
@@ -36,6 +38,8 @@ app.use('/api/planificacion', planificacionRoutes);
 app.use('/api/convocatorias', convocatoriasRoutes);
 app.use('/api/padres', padresRoutes);
 app.use('/api/diagnostico', diagnosticoRoutes);
+app.use('/api/finanzas', finanzasRoutes);
+app.use('/api/proyectos', proyectosRoutes);
 
 // Ruta de salud
 app.get('/api/health', (req, res) => {

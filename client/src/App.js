@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
+import DashboardAdmin from './components/DashboardAdmin';
 import PortalDirector from './components/PortalDirector';
 import PortalSecretaria from './components/PortalSecretaria';
 import PortalPadres from './components/PortalPadres';
@@ -63,9 +64,9 @@ function App() {
       case 'secretaria':
         return <PortalSecretaria />;
       case 'admin':
-        return <Dashboard />;
+        return <DashboardAdmin />;
       default:
-        return <Dashboard />;
+        return <DashboardAdmin />;
     }
   };
 
@@ -121,7 +122,7 @@ function App() {
             path="/dashboard"
             element={
               isAuthenticated ? (
-                getPortalByRole(user?.rol)
+                user?.rol === 'admin' ? <DashboardAdmin /> : getPortalByRole(user?.rol)
               ) : (
                 <Navigate to="/login" />
               )

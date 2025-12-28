@@ -175,12 +175,56 @@ const createTables = () => {
     )
   `);
 
+  // Tabla de egresos
+  db.run(`
+    CREATE TABLE IF NOT EXISTS egresos (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      concepto TEXT NOT NULL,
+      monto REAL NOT NULL,
+      categoria TEXT,
+      descripcion TEXT,
+      fecha DATE NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  // Tabla de proyectos y actividades del colegio
+  db.run(`
+    CREATE TABLE IF NOT EXISTS proyectos_colegio (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      titulo TEXT NOT NULL,
+      descripcion TEXT,
+      categoria TEXT NOT NULL,
+      imagen_url TEXT,
+      fecha_inicio DATE,
+      fecha_fin DATE,
+      estado TEXT DEFAULT 'activo',
+      destacado INTEGER DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  // Tabla de logros y reconocimientos
+  db.run(`
+    CREATE TABLE IF NOT EXISTS logros_colegio (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      titulo TEXT NOT NULL,
+      descripcion TEXT,
+      categoria TEXT NOT NULL,
+      estudiantes TEXT,
+      fecha DATE NOT NULL,
+      imagen_url TEXT,
+      destacado INTEGER DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
   // Insertar usuarios por defecto
   const bcrypt = require('bcryptjs');
   const adminPassword = bcrypt.hashSync('admin123', 10);
   const directorPassword = bcrypt.hashSync('director123', 10);
   const secretariaPassword = bcrypt.hashSync('secretaria123', 10);
-  
+
   db.run(`
     INSERT OR IGNORE INTO usuarios (nombre, email, password, rol)
     VALUES 
@@ -197,7 +241,7 @@ const createTables = () => {
     },
     {
       estudiante: { dni: '23456789', nombres: 'María Elena', apellidos: 'González Sánchez', fecha_nacimiento: '2016-07-20', nivel: 'Primaria', grado: '2do', turno: 'Tarde' },
-      apoderado: { nombres: 'Kane', apellidos: 'González Martínez', dni: '76543210', telefono: '987654322', email: 'kanekik0902@gmail.com', parentesco: 'Padre' }
+      apoderado: { nombres: 'Kane', apellidos: 'González Martínez', dni: '76543210', telefono: '987654322', email: 'kanekk0902@gmail.com', parentesco: 'Padre' }
     },
     {
       estudiante: { dni: '34567890', nombres: 'Antony', apellidos: 'Boyer Rodríguez', fecha_nacimiento: '2014-11-10', nivel: 'Primaria', grado: '4to', turno: 'Mañana' },
@@ -239,17 +283,17 @@ const createTables = () => {
         item.estudiante.grado,
         item.estudiante.turno
       ],
-      function(err) {
+      function (err) {
         if (err) {
           console.error('Error al insertar estudiante:', err);
           return;
         }
         const estudianteId = this.lastID || this.changes;
-        
+
         // Obtener el ID del estudiante recién insertado
         db.get('SELECT id FROM estudiantes WHERE dni = ?', [item.estudiante.dni], (err, row) => {
           if (err || !row) return;
-          
+
           // Insertar apoderado
           db.run(
             `INSERT OR IGNORE INTO apoderados (estudiante_id, nombres, apellidos, dni, telefono, email, parentesco)
@@ -269,8 +313,116 @@ const createTables = () => {
     );
   });
 
+  // Insertar proyectos y actividades de ejemplo
+  const proyectosEjemplo = [
+    {
+      titulo: 'Festival de Danzas Folklóricas',
+      descripcion: 'Nuestros estudiantes participarán en el festival regional de danzas folklóricas representando las tradiciones de nuestra región.',
+      categoria: 'Arte y Cultura',
+      fecha_inicio: '2024-03-15',
+      fecha_fin: '2024-03-20',
+      estado: 'activo',
+      destacado: 1
+    },
+    {
+      titulo: 'Olimpiadas de Matemáticas',
+      descripcion: 'Competencia académica donde nuestros estudiantes demostrarán sus habilidades matemáticas.',
+      categoria: 'Académico',
+      fecha_inicio: '2024-04-10',
+      fecha_fin: '2024-04-12',
+      estado: 'activo',
+      destacado: 1
+    },
+    {
+      titulo: 'Proyecto de Huerto Escolar',
+      descripcion: 'Iniciativa ecológica donde los estudiantes aprenderán sobre agricultura sostenible.',
+      categoria: 'Ecología',
+      fecha_inicio: '2024-02-01',
+      fecha_fin: '2024-12-31',
+      estado: 'activo',
+      destacado: 0
+    },
+    {
+      titulo: 'Taller de Robótica',
+      descripcion: 'Nuevo taller de robótica para estudiantes de secundaria interesados en tecnología.',
+      categoria: 'Tecnología',
+      fecha_inicio: '2024-05-01',
+      fecha_fin: '2024-11-30',
+      estado: 'activo',
+      destacado: 1
+    }
+  ];
+
+  proyectosEjemplo.forEach((proyecto) => {
+    db.run(
+      `INSERT OR IGNORE INTO proyectos_colegio (titulo, descripcion, categoria, fecha_inicio, fecha_fin, estado, destacado)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [
+        proyecto.titulo,
+        proyecto.descripcion,
+        proyecto.categoria,
+        proyecto.fecha_inicio,
+        proyecto.fecha_fin,
+        proyecto.estado,
+        proyecto.destacado
+      ]
+    );
+  });
+
+  // Insertar logros de ejemplo
+  const logrosEjemplo = [
+    {
+      titulo: 'Ganadores del Concurso de Danzas Regionales',
+      descripcion: 'Nuestro grupo de danzas obtuvo el primer lugar en el concurso regional de danzas folklóricas.',
+      categoria: 'Arte y Cultura',
+      estudiantes: 'Grupo de Danzas - Secundaria',
+      fecha: '2024-03-20',
+      destacado: 1
+    },
+    {
+      titulo: 'Medalla de Oro en Olimpiadas de Matemáticas',
+      descripcion: 'Estudiante de 5to año obtuvo medalla de oro en las olimpiadas nacionales de matemáticas.',
+      categoria: 'Académico',
+      estudiantes: 'María Elena González',
+      fecha: '2024-04-15',
+      destacado: 1
+    },
+    {
+      titulo: 'Reconocimiento por Proyecto Ecológico',
+      descripcion: 'El proyecto de huerto escolar recibió reconocimiento del Ministerio de Educación.',
+      categoria: 'Ecología',
+      estudiantes: 'Comité Ecológico',
+      fecha: '2024-02-28',
+      destacado: 1
+    },
+    {
+      titulo: 'Participación en Feria de Ciencias',
+      descripcion: 'Estudiantes de secundaria participaron exitosamente en la feria regional de ciencias.',
+      categoria: 'Ciencias',
+      estudiantes: 'Equipo de Ciencias - 3ro y 4to',
+      fecha: '2024-05-10',
+      destacado: 0
+    }
+  ];
+
+  logrosEjemplo.forEach((logro) => {
+    db.run(
+      `INSERT OR IGNORE INTO logros_colegio (titulo, descripcion, categoria, estudiantes, fecha, destacado)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [
+        logro.titulo,
+        logro.descripcion,
+        logro.categoria,
+        logro.estudiantes,
+        logro.fecha,
+        logro.destacado
+      ]
+    );
+  });
+
   console.log('✅ Tablas creadas correctamente');
   console.log('✅ Estudiantes de ejemplo insertados');
+  console.log('✅ Proyectos y logros de ejemplo insertados');
 };
 
 const getDb = () => {
@@ -297,4 +449,3 @@ module.exports = {
   getDb,
   close
 };
-

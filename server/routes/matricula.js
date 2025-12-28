@@ -298,4 +298,59 @@ router.post('/ratificacion', authenticate, async (req, res) => {
   );
 });
 
+// Ratificación de permanencia (individual)
+router.post('/ratificacion/individual', authenticate, async (req, res) => {
+  const { estudiante_id, año_academico } = req.body;
+  const database = db.getDb();
+
+  if (!estudiante_id || !año_academico) {
+    return res.status(400).json({ error: 'estudiante_id y año_academico son requeridos' });
+  }
+
+  // Obtener datos del estudiante y apoderado
+  database.get(
+    `SELECT e.*, a.email, a.telefono, a.nombres as apoderado_nombres
+     FROM estudiantes e
+     LEFT JOIN apoderados a ON e.id = a.estudiante_id
+     WHERE e.id = ?`,
+    [estudiante_id],
+    async (err, estudiante) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+
+      if (!estudiante) {
+        return res.status(404).json({ error: 'Estudiante no encontrado' });
+      }
+
+      if (!estudiante.email && !estudiante.telefono) {
+        return res.status(400).json({ error: 'El estudiante no tiene email ni teléfono registrado' });
+      }
+
+      try {
+        const resultado = await notificacionesService.enviarRatificacion(
+          estudiante.email,
+          estudiante.telefono,
+          estudiante.nombres + ' ' + estudiante.apellidos,
+          año_academico
+        );
+
+        if (resultado && resultado.success !== false) {
+          res.json({
+            message: 'Ratificación enviada exitosamente',
+            estudiante: estudiante.nombres + ' ' + estudiante.apellidos,
+            email: estudiante.email,
+            telefono: estudiante.telefono
+          });
+        } else {
+          res.status(500).json({ error: 'Error al enviar ratificación', detalles: resultado?.error });
+        }
+      } catch (error) {
+        console.error(`Error al enviar ratificación individual:`, error.message);
+        res.status(500).json({ error: error.message });
+      }
+    }
+  );
+});
+
 module.exports = router;

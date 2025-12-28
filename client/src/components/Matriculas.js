@@ -67,11 +67,16 @@ const Matriculas = () => {
 
   return (
     <div className="container">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '15px' }}>
         <h1>Gestión de Matrículas</h1>
-        <button onClick={handleRatificacion} className="btn btn-success">
-          Enviar Ratificación Masiva
-        </button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <a href="/inscripcion" target="_blank" className="btn btn-primary" style={{ textDecoration: 'none' }}>
+            Nueva Inscripción
+          </a>
+          <button onClick={handleRatificacion} className="btn btn-success">
+            Enviar Ratificación Masiva
+          </button>
+        </div>
       </div>
 
       <div className="card">

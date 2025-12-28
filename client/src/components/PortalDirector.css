@@ -6,17 +6,18 @@
   text-align: center;
   margin-bottom: 30px;
   padding-bottom: 20px;
-  border-bottom: 3px solid #0066cc;
+  border-bottom: 3px solid var(--accent-magenta);
 }
 
 .portal-header h1 {
-  color: #0066cc;
+  color: var(--text-white);
   font-size: 32px;
   margin-bottom: 10px;
+  text-shadow: 0 0 10px rgba(139, 46, 110, 0.5);
 }
 
 .portal-header p {
-  color: #666;
+  color: var(--text-muted);
   font-size: 18px;
 }
 
@@ -37,13 +38,25 @@
 .btn-large {
   padding: 15px 30px;
   font-size: 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-light);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-large:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent-light);
+  color: var(--text-white);
 }
 
 .portal-tabs {
   display: flex;
   gap: 10px;
   margin-bottom: 30px;
-  border-bottom: 2px solid #ddd;
+  border-bottom: 1px solid var(--card-border);
   padding-bottom: 10px;
 }
 
@@ -51,7 +64,7 @@
   padding: 12px 24px;
   border: none;
   background: transparent;
-  color: #666;
+  color: var(--text-muted);
   cursor: pointer;
   font-size: 16px;
   border-bottom: 3px solid transparent;
@@ -59,13 +72,13 @@
 }
 
 .portal-tabs button:hover {
-  color: #0066cc;
-  background: #f0f0f0;
+  color: var(--text-white);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .portal-tabs button.active {
-  color: #0066cc;
-  border-bottom-color: #0066cc;
+  color: var(--accent-light);
+  border-bottom-color: var(--accent-light);
   font-weight: bold;
 }
 
@@ -79,9 +92,8 @@
   .form-row {
     grid-template-columns: 1fr;
   }
-  
+
   .actions-section {
     flex-direction: column;
   }
 }
-
